@@ -18,7 +18,7 @@ function createPrismaClient() {
     max: 5,
   });
 
-  const adapter = new PrismaPg({ pool });
+  const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
 
