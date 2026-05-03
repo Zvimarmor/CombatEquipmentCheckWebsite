@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Team {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  soldiers Soldier[]
+
+  createdAt DateTime @default(now())
+}
+
+model Soldier {
+  id            String         @id @default(cuid())
+  name          String
+  personalId    String?
+  teamId        String
+  team          Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  equipment     Equipment[]
+  verifications Verification[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([name, teamId])
+  @@index([teamId])
+}
+
+model Equipment {
+  id           String  @id @default(cuid())
+  type         String  // e.g., "M4", "M5 (כוונת)"
+  serialNumber String  // The serial number as string
+  soldierId    String
+  soldier      Soldier @relation(fields: [soldierId], references: [id], onDelete: Cascade)
+
+  @@index([soldierId])
+}
+
+model Verification {
+  id        String   @id @default(cuid())
+  soldierId String
+  soldier   Soldier  @relation(fields: [soldierId], references: [id], onDelete: Cascade)
+  timestamp DateTime @default(now())
+  date      String   // "2026-05-03" for easy daily grouping
+  items     Json     // Array of {equipmentType, serialNumber, verified}
+
+  @@index([soldierId, date])
+  @@index([date])
+}
+
+model AppConfig {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
