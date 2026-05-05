@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import TeamSelector from '@/components/TeamSelector';
 import SoldierSelector from '@/components/SoldierSelector';
 import EquipmentChecklist from '@/components/EquipmentChecklist';
@@ -67,9 +68,16 @@ export default function Home() {
 
   return (
     <>
-      <header className="app-header">
+      <header className="app-header" style={{ position: 'relative' }}>
         <h1 className="app-header__title">בדיקת צל״ם</h1>
         <p className="app-header__subtitle">אימות ציוד קרבי</p>
+        <Link 
+          href="/admin" 
+          className="btn btn--secondary btn--small"
+          style={{ position: 'absolute', top: 'var(--space-md)', left: 'var(--space-md)' }}
+        >
+          ⚙️ מפקד
+        </Link>
       </header>
 
       <main className="page-container">
