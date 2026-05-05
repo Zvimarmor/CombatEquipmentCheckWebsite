@@ -6,7 +6,6 @@ import { formatTimestamp, getToday, formatDateDisplay } from '@/lib/utils';
 interface SoldierStatus {
   soldierId: string;
   soldierName: string;
-  personalId: string | null;
   equipmentCount: number;
   verificationStatus: 'full' | 'partial' | 'none';
   verifiedItemCount: number;
@@ -38,6 +37,9 @@ interface StatusData {
 export default function AdminDashboard() {
   const [date, setDate] = useState(getToday());
   const [data, setData] = useState<StatusData | null>(null);
+  const [summaryData, setSummaryData] = useState<{type: string, total: number, verified: number}[]>([]);
+  const [summaryTeam, setSummaryTeam] = useState<string>('');
+  const [teamsList, setTeamsList] = useState<{id: string, name: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,22 +47,34 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/status?date=${selectedDate}`);
-      if (!res.ok) {
-        if (res.status === 401) {
+      const statusRes = await fetch(`/api/admin/status?date=${selectedDate}`);
+      if (!statusRes.ok) {
+        if (statusRes.status === 401) {
           window.location.reload();
           return;
         }
-        throw new Error('Failed to fetch');
+        throw new Error('Failed to fetch status');
       }
-      const statusData = await res.json();
+      const statusData = await statusRes.json();
       setData(statusData);
+
+      // Extract teams for the filter dropdown
+      const fetchedTeams = statusData.teams.map((t: TeamStatus) => ({ id: t.teamId, name: t.teamName }));
+      setTeamsList(fetchedTeams);
+
+      // Fetch summary
+      const summaryUrl = `/api/admin/summary?date=${selectedDate}${summaryTeam ? `&teamId=${summaryTeam}` : ''}`;
+      const summaryRes = await fetch(summaryUrl);
+      if (summaryRes.ok) {
+        const sumData = await summaryRes.json();
+        setSummaryData(sumData.summary);
+      }
     } catch {
       setError('שגיאה בטעינת הנתונים');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [summaryTeam]);
 
   useEffect(() => {
     fetchStatus(date);
@@ -153,6 +167,46 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          {/* Aggregate Equipment Summary */}
+          <div className="card" style={{ marginBottom: 'var(--space-2xl)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
+              <h2 className="card__title" style={{ margin: 0 }}>
+                <span className="card__title-icon">📦</span>
+                סיכום אמצעים
+              </h2>
+              <select
+                className="form-select"
+                style={{ width: 'auto', minWidth: '150px' }}
+                value={summaryTeam}
+                onChange={(e) => setSummaryTeam(e.target.value)}
+              >
+                <option value="">כל הפלוגה</option>
+                {teamsList.map((t) => (
+                  <option key={t.id} value={t.id}>{t.name}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="equipment-summary-grid">
+              {summaryData.length === 0 ? (
+                <p style={{ color: 'var(--text-muted)' }}>לא נמצא ציוד.</p>
+              ) : (
+                summaryData.map((item) => (
+                  <div key={item.type} className="equipment-summary-item">
+                    <div className="equipment-summary-item__name">{item.type}</div>
+                    <div className="equipment-summary-item__count">
+                      <span className={item.verified === item.total ? 'text-success' : item.verified > 0 ? 'text-warning' : 'text-danger'}>
+                        {item.verified}
+                      </span>
+                      {' '}מתוך{' '}
+                      {item.total}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
           {/* Team Sections */}
           {data.teams.map((team) => (
             <div key={team.teamId} className="team-section">
@@ -180,7 +234,6 @@ export default function AdminDashboard() {
                     <div>
                       <div className="soldier-row__name">{soldier.soldierName}</div>
                       <div className="soldier-row__meta">
-                        {soldier.personalId && `מס"א: ${soldier.personalId} · `}
                         {soldier.equipmentCount} פריטים
                       </div>
                     </div>

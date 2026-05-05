@@ -24,13 +24,6 @@ function normalizeSerial(val: unknown): string | null {
   return str;
 }
 
-function getPersonalId(row: Record<string, unknown>): string | null {
-  const id = row['מספר אישי'] ?? row['מס"א'];
-  if (id === null || id === undefined) return null;
-  const str = String(id).trim();
-  if (str === '-' || str === '') return null;
-  return str;
-}
 
 async function main() {
   console.log('🔄 Starting seed process...');
@@ -91,13 +84,10 @@ async function main() {
         continue;
       }
 
-      const personalId = getPersonalId(row);
-
       // Create soldier
       const soldier = await prisma.soldier.create({
         data: {
           name: soldierName.trim(),
-          personalId,
           teamId: team.id,
         },
       });

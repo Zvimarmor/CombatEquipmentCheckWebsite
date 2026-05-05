@@ -15,7 +15,6 @@ interface EquipmentRow {
 
 export default function AdminAddSoldier() {
   const [name, setName] = useState('');
-  const [personalId, setPersonalId] = useState('');
   const [teamId, setTeamId] = useState('');
   const [teams, setTeams] = useState<TeamOption[]>([]);
   const [equipment, setEquipment] = useState<EquipmentRow[]>([
@@ -59,7 +58,6 @@ export default function AdminAddSoldier() {
 
   const resetForm = () => {
     setName('');
-    setPersonalId('');
     setTeamId('');
     setEquipment([{ type: '', serialNumber: '' }]);
   };
@@ -85,7 +83,6 @@ export default function AdminAddSoldier() {
         body: JSON.stringify({
           name: name.trim(),
           teamId,
-          personalId: personalId.trim() || undefined,
           equipment: validEquipment,
         }),
       });
@@ -140,20 +137,7 @@ export default function AdminAddSoldier() {
             />
           </div>
 
-          {/* Personal ID */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="soldier-pid">
-              מספר אישי (אופציונלי)
-            </label>
-            <input
-              id="soldier-pid"
-              type="text"
-              className="form-input"
-              placeholder='מס"א'
-              value={personalId}
-              onChange={(e) => setPersonalId(e.target.value)}
-            />
-          </div>
+
 
           {/* Team Selection */}
           <div className="form-group">

@@ -12,7 +12,6 @@ interface EquipmentItem {
 interface SoldierData {
   id: string;
   name: string;
-  personalId: string | null;
   team: { id: string; name: string };
   equipment: EquipmentItem[];
 }
@@ -39,7 +38,6 @@ export default function AdminEditSoldier({
 }: AdminEditSoldierProps) {
   const [soldier, setSoldier] = useState<SoldierData | null>(null);
   const [name, setName] = useState('');
-  const [personalId, setPersonalId] = useState('');
   const [teamId, setTeamId] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -67,7 +65,6 @@ export default function AdminEditSoldier({
       const data = await res.json();
       setSoldier(data);
       setName(data.name);
-      setPersonalId(data.personalId || '');
       setTeamId(data.team.id);
     } catch {
       // error handled by loading state
@@ -82,7 +79,7 @@ export default function AdminEditSoldier({
       const res = await fetch(`/api/admin/soldiers/${soldierId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, teamId, personalId: personalId || null }),
+        body: JSON.stringify({ name, teamId }),
       });
       if (!res.ok) throw new Error('Failed');
       const updated = await res.json();
@@ -213,17 +210,7 @@ export default function AdminEditSoldier({
           />
         </div>
 
-        <div className="form-group">
-          <label className="form-label" htmlFor="edit-pid">מספר אישי</label>
-          <input
-            id="edit-pid"
-            type="text"
-            className="form-input"
-            placeholder='מס"א'
-            value={personalId}
-            onChange={(e) => setPersonalId(e.target.value)}
-          />
-        </div>
+
 
         <div className="form-group">
           <label className="form-label" htmlFor="edit-team">צוות</label>

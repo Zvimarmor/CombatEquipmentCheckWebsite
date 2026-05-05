@@ -21,7 +21,6 @@ model Team {
 model Soldier {
   id            String         @id @default(cuid())
   name          String
-  personalId    String?
   teamId        String
   team          Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
   equipment     Equipment[]

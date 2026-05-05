@@ -54,16 +54,14 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params;
     const body = await request.json();
-    const { name, teamId, personalId } = body as {
+    const { name, teamId } = body as {
       name?: string;
       teamId?: string;
-      personalId?: string | null;
     };
 
     const updateData: Record<string, unknown> = {};
     if (name !== undefined) updateData.name = name.trim();
     if (teamId !== undefined) updateData.teamId = teamId;
-    if (personalId !== undefined) updateData.personalId = personalId?.trim() || null;
 
     const soldier = await prisma.soldier.update({
       where: { id },

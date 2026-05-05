@@ -5,12 +5,11 @@ import { useState, useEffect } from 'react';
 interface Soldier {
   id: string;
   name: string;
-  personalId: string | null;
 }
 
 interface SoldierSelectorProps {
   team: { id: string; name: string };
-  onSelect: (soldier: { id: string; name: string; personalId: string | null }) => void;
+  onSelect: (soldier: { id: string; name: string }) => void;
 }
 
 export default function SoldierSelector({ team, onSelect }: SoldierSelectorProps) {
@@ -76,7 +75,6 @@ export default function SoldierSelector({ team, onSelect }: SoldierSelectorProps
           {soldiers.map((soldier) => (
             <option key={soldier.id} value={soldier.id}>
               {soldier.name}
-              {soldier.personalId ? ` (${soldier.personalId})` : ''}
             </option>
           ))}
         </select>

@@ -55,10 +55,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { name, teamId, personalId, equipment } = body as {
+    const { name, teamId, equipment } = body as {
       name: string;
       teamId: string;
-      personalId?: string;
       equipment: { type: string; serialNumber: string }[];
     };
 
@@ -85,7 +84,6 @@ export async function POST(request: NextRequest) {
       data: {
         name: name.trim(),
         teamId,
-        personalId: personalId?.trim() || null,
         equipment: {
           create: (equipment || [])
             .filter((e: { type: string; serialNumber: string }) => e.type?.trim() && e.serialNumber?.trim())

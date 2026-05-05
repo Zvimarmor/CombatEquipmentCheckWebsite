@@ -1222,3 +1222,45 @@ body::before {
   }
 }
 
+/* ---- Equipment Summary ---- */
+.equipment-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.equipment-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: var(--bg-input);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+}
+
+.equipment-summary-item__name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.equipment-summary-item__count {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.text-success {
+  color: var(--success);
+  font-weight: bold;
+}
+
+.text-warning {
+  color: var(--warning);
+  font-weight: bold;
+}
+
+.text-danger {
+  color: var(--danger);
+  font-weight: bold;
+}
+

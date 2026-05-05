@@ -6,7 +6,6 @@ import AdminEditSoldier from './AdminEditSoldier';
 interface SoldierListItem {
   id: string;
   name: string;
-  personalId: string | null;
   team: { id: string; name: string };
   equipment: { id: string; type: string; serialNumber: string }[];
   _count: { equipment: number };
@@ -160,7 +159,6 @@ export default function AdminManageSoldiers() {
                 <div className="soldier-card__name">{soldier.name}</div>
                 <div className="soldier-card__meta">
                   🎖️ {soldier.team.name}
-                  {soldier.personalId && ` · מס"א: ${soldier.personalId}`}
                 </div>
               </div>
               <div className="soldier-card__badge">

@@ -16,7 +16,6 @@ interface SelectedTeam {
 interface SelectedSoldier {
   id: string;
   name: string;
-  personalId: string | null;
 }
 
 interface VerificationResult {

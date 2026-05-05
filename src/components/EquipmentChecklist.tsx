@@ -9,7 +9,7 @@ interface EquipmentItem {
 }
 
 interface EquipmentChecklistProps {
-  soldier: { id: string; name: string; personalId: string | null };
+  soldier: { id: string; name: string };
   teamName: string;
   onComplete: (result: {
     timestamp: string;

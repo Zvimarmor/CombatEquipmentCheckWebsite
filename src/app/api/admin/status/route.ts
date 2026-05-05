@@ -85,7 +85,6 @@ export async function GET(request: NextRequest) {
         return {
           soldierId: soldier.id,
           soldierName: soldier.name,
-          personalId: soldier.personalId,
           equipmentCount: totalEquipment,
           verificationStatus,
           verifiedItemCount,
