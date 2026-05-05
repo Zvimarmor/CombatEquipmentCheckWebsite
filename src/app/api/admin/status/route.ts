@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getToday } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
+interface VerificationItemData {
+  equipmentType: string;
+  serialNumber: string;
+  verified: boolean;
+}
+
 export async function GET(request: NextRequest) {
   try {
     // Check admin auth cookie
@@ -52,25 +60,54 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Transform to status view
-    const status = teams.map((team) => ({
-      teamId: team.id,
-      teamName: team.name,
-      soldiers: team.soldiers.map((soldier) => {
+    // Transform to status view with tri-state verification
+    const status = teams.map((team) => {
+      const soldiers = team.soldiers.map((soldier) => {
         const lastVerification = soldier.verifications[0] || null;
-        const verified = !!lastVerification;
+        const totalEquipment = soldier._count.equipment;
+
+        let verificationStatus: 'full' | 'partial' | 'none' = 'none';
+        let verifiedItemCount = 0;
+        let missingItems: string[] = [];
+
+        if (lastVerification) {
+          const items = (lastVerification.items as unknown as VerificationItemData[]) || [];
+          verifiedItemCount = items.filter((i) => i.verified).length;
+          missingItems = items.filter((i) => !i.verified).map((i) => i.equipmentType);
+
+          if (verifiedItemCount >= totalEquipment && verifiedItemCount > 0) {
+            verificationStatus = 'full';
+          } else if (verifiedItemCount > 0) {
+            verificationStatus = 'partial';
+          }
+        }
+
         return {
           soldierId: soldier.id,
           soldierName: soldier.name,
           personalId: soldier.personalId,
-          equipmentCount: soldier._count.equipment,
-          verified,
+          equipmentCount: totalEquipment,
+          verificationStatus,
+          verifiedItemCount,
+          missingItems,
           verificationTime: lastVerification?.timestamp || null,
+          // Keep backward compatibility
+          verified: verificationStatus === 'full',
         };
-      }),
-      verifiedCount: team.soldiers.filter((s) => s.verifications.length > 0).length,
-      totalCount: team.soldiers.length,
-    }));
+      });
+
+      const fullCount = soldiers.filter((s) => s.verificationStatus === 'full').length;
+      const partialCount = soldiers.filter((s) => s.verificationStatus === 'partial').length;
+
+      return {
+        teamId: team.id,
+        teamName: team.name,
+        soldiers,
+        verifiedCount: fullCount,
+        partialCount,
+        totalCount: soldiers.length,
+      };
+    });
 
     return NextResponse.json({
       date,
@@ -79,6 +116,7 @@ export async function GET(request: NextRequest) {
       summary: {
         totalSoldiers: status.reduce((sum, t) => sum + t.totalCount, 0),
         totalVerified: status.reduce((sum, t) => sum + t.verifiedCount, 0),
+        totalPartial: status.reduce((sum, t) => sum + t.partialCount, 0),
       },
     });
   } catch (error) {

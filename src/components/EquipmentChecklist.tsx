@@ -28,6 +28,7 @@ export default function EquipmentChecklist({
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPartialConfirm, setShowPartialConfirm] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -58,6 +59,8 @@ export default function EquipmentChecklist({
     equipment.every((item) => verified[item.id] === true);
 
   const verifiedCount = Object.values(verified).filter(Boolean).length;
+  const anyVerified = verifiedCount > 0;
+  const isPartial = anyVerified && !allVerified;
 
   const toggleAll = () => {
     const allChecked = equipment.every((item) => verified[item.id]);
@@ -68,9 +71,16 @@ export default function EquipmentChecklist({
     setVerified(newState);
   };
 
-  const handleSubmit = async () => {
-    if (!allVerified) return;
+  const handleSubmitClick = () => {
+    if (isPartial) {
+      setShowPartialConfirm(true);
+    } else {
+      doSubmit();
+    }
+  };
 
+  const doSubmit = async () => {
+    setShowPartialConfirm(false);
     setSubmitting(true);
     setError(null);
 
@@ -79,7 +89,7 @@ export default function EquipmentChecklist({
         equipmentId: item.id,
         equipmentType: item.type,
         serialNumber: item.serialNumber,
-        verified: true,
+        verified: verified[item.id] || false,
       }));
 
       const res = await fetch('/api/verify', {
@@ -194,17 +204,45 @@ export default function EquipmentChecklist({
         </div>
       )}
 
+      {/* Partial Verification Confirmation Modal */}
+      {showPartialConfirm && (
+        <div className="modal-overlay" onClick={() => setShowPartialConfirm(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal__icon">⚠️</div>
+            <h3 className="modal__title">אימות חלקי</h3>
+            <p className="modal__text">
+              אימתת {verifiedCount} מתוך {equipment.length} פריטים.
+              <br />
+              האם לשלוח אימות חלקי?
+            </p>
+            <div className="modal__actions">
+              <button className="btn btn--primary" onClick={doSubmit}>
+                ✅ כן, שלח
+              </button>
+              <button
+                className="btn btn--secondary"
+                onClick={() => setShowPartialConfirm(false)}
+              >
+                ביטול
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <button
         className="btn btn--primary"
         style={{ marginTop: 'var(--space-xl)' }}
-        disabled={!allVerified || submitting}
-        onClick={handleSubmit}
+        disabled={!anyVerified || submitting}
+        onClick={handleSubmitClick}
       >
         {submitting ? (
           <>
             <div className="spinner" />
             שולח...
           </>
+        ) : isPartial ? (
+          <>⚠️ שלח אימות חלקי ({verifiedCount}/{equipment.length})</>
         ) : (
           <>✅ שלח אימות</>
         )}

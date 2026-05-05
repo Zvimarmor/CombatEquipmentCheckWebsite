@@ -8,8 +8,11 @@ interface SoldierStatus {
   soldierName: string;
   personalId: string | null;
   equipmentCount: number;
-  verified: boolean;
+  verificationStatus: 'full' | 'partial' | 'none';
+  verifiedItemCount: number;
+  missingItems: string[];
   verificationTime: string | null;
+  verified: boolean;
 }
 
 interface TeamStatus {
@@ -17,6 +20,7 @@ interface TeamStatus {
   teamName: string;
   soldiers: SoldierStatus[];
   verifiedCount: number;
+  partialCount: number;
   totalCount: number;
 }
 
@@ -27,6 +31,7 @@ interface StatusData {
   summary: {
     totalSoldiers: number;
     totalVerified: number;
+    totalPartial: number;
   };
 }
 
@@ -71,139 +76,146 @@ export default function AdminDashboard() {
 
   return (
     <>
-      <header className="app-header">
-        <h1 className="app-header__title">לוח בקרה — מפקד</h1>
-        <p className="app-header__subtitle">ניהול בדיקת צל״ם</p>
-      </header>
-
-      <main className="page-container page-container--wide">
-        {/* Header with date picker */}
-        <div className="admin-header">
-          <h2 className="admin-header__title">
-            סטטוס אימות — {formatDateDisplay(date)}
-          </h2>
-          <div className="date-picker-row">
-            <input
-              id="date-filter"
-              type="date"
-              className="form-input"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-            <button
-              className="btn btn--secondary btn--small"
-              onClick={() => setDate(getToday())}
-            >
-              היום
-            </button>
-            <button
-              className="btn btn--secondary btn--small"
-              onClick={() => fetchStatus(date)}
-              title="רענן"
-            >
-              🔄
-            </button>
-          </div>
+      {/* Header with date picker */}
+      <div className="admin-header">
+        <h2 className="admin-header__title">
+          סטטוס אימות — {formatDateDisplay(date)}
+        </h2>
+        <div className="date-picker-row">
+          <input
+            id="date-filter"
+            type="date"
+            className="form-input"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+          <button
+            className="btn btn--secondary btn--small"
+            onClick={() => setDate(getToday())}
+          >
+            היום
+          </button>
+          <button
+            className="btn btn--secondary btn--small"
+            onClick={() => fetchStatus(date)}
+            title="רענן"
+          >
+            🔄
+          </button>
         </div>
+      </div>
 
-        {loading ? (
-          <div className="loading-state">
-            <div className="spinner" />
-            <span>טוען נתונים...</span>
-          </div>
-        ) : error ? (
-          <div className="card">
-            <p style={{ color: 'var(--danger)', textAlign: 'center' }}>{error}</p>
-          </div>
-        ) : data ? (
-          <>
-            {/* Summary Stats */}
-            <div className="admin-stats">
-              <div className="stat-card">
-                <div className="stat-card__value">{data.summary.totalSoldiers}</div>
-                <div className="stat-card__label">סה״כ חיילים</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-card__value stat-card__value--success">
-                  {data.summary.totalVerified}
-                </div>
-                <div className="stat-card__label">אימתו ✅</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-card__value stat-card__value--danger">
-                  {data.summary.totalSoldiers - data.summary.totalVerified}
-                </div>
-                <div className="stat-card__label">ממתינים ❌</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-card__value">
-                  {data.summary.totalSoldiers > 0
-                    ? Math.round(
-                        (data.summary.totalVerified / data.summary.totalSoldiers) * 100
-                      )
-                    : 0}
-                  %
-                </div>
-                <div className="stat-card__label">אחוז השלמה</div>
-              </div>
+      {loading ? (
+        <div className="loading-state">
+          <div className="spinner" />
+          <span>טוען נתונים...</span>
+        </div>
+      ) : error ? (
+        <div className="card">
+          <p style={{ color: 'var(--danger)', textAlign: 'center' }}>{error}</p>
+        </div>
+      ) : data ? (
+        <>
+          {/* Summary Stats */}
+          <div className="admin-stats">
+            <div className="stat-card">
+              <div className="stat-card__value">{data.summary.totalSoldiers}</div>
+              <div className="stat-card__label">סה״כ חיילים</div>
             </div>
+            <div className="stat-card">
+              <div className="stat-card__value stat-card__value--success">
+                {data.summary.totalVerified}
+              </div>
+              <div className="stat-card__label">אימות מלא ✅</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card__value stat-card__value--warning">
+                {data.summary.totalPartial}
+              </div>
+              <div className="stat-card__label">אימות חלקי ⚠️</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card__value stat-card__value--danger">
+                {data.summary.totalSoldiers - data.summary.totalVerified - data.summary.totalPartial}
+              </div>
+              <div className="stat-card__label">ממתינים ❌</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card__value">
+                {data.summary.totalSoldiers > 0
+                  ? Math.round(
+                      (data.summary.totalVerified / data.summary.totalSoldiers) * 100
+                    )
+                  : 0}
+                %
+              </div>
+              <div className="stat-card__label">אחוז השלמה</div>
+            </div>
+          </div>
 
-            {/* Team Sections */}
-            {data.teams.map((team) => (
-              <div key={team.teamId} className="team-section">
-                <div className="team-section__header">
-                  <span className="team-section__name">🎖️ {team.teamName}</span>
-                  <span className="team-section__progress">
-                    {team.verifiedCount}/{team.totalCount}
-                  </span>
-                </div>
-                <div className="team-section__progress-bar">
-                  <div
-                    className="team-section__progress-fill"
-                    style={{
-                      width:
-                        team.totalCount > 0
-                          ? `${(team.verifiedCount / team.totalCount) * 100}%`
-                          : '0%',
-                    }}
-                  />
-                </div>
-                <div className="team-section__body">
-                  {team.soldiers.map((soldier) => (
-                    <div key={soldier.soldierId} className="soldier-row">
-                      <div>
-                        <div className="soldier-row__name">{soldier.soldierName}</div>
-                        <div className="soldier-row__meta">
-                          {soldier.personalId && `מס"א: ${soldier.personalId} · `}
-                          {soldier.equipmentCount} פריטים
-                        </div>
-                      </div>
-                      <div className="soldier-row__status">
-                        {soldier.verified ? (
-                          <>
-                            <span className="status-badge status-badge--verified">
-                              ✅ אומת
-                            </span>
-                            {soldier.verificationTime && (
-                              <span className="verification-time">
-                                {formatTimestamp(soldier.verificationTime)}
-                              </span>
-                            )}
-                          </>
-                        ) : (
-                          <span className="status-badge status-badge--pending">
-                            ❌ ממתין
-                          </span>
-                        )}
+          {/* Team Sections */}
+          {data.teams.map((team) => (
+            <div key={team.teamId} className="team-section">
+              <div className="team-section__header">
+                <span className="team-section__name">🎖️ {team.teamName}</span>
+                <span className="team-section__progress">
+                  {team.verifiedCount}/{team.totalCount}
+                  {team.partialCount > 0 && ` (${team.partialCount} חלקי)`}
+                </span>
+              </div>
+              <div className="team-section__progress-bar">
+                <div
+                  className="team-section__progress-fill"
+                  style={{
+                    width:
+                      team.totalCount > 0
+                        ? `${((team.verifiedCount + team.partialCount * 0.5) / team.totalCount) * 100}%`
+                        : '0%',
+                  }}
+                />
+              </div>
+              <div className="team-section__body">
+                {team.soldiers.map((soldier) => (
+                  <div key={soldier.soldierId} className="soldier-row">
+                    <div>
+                      <div className="soldier-row__name">{soldier.soldierName}</div>
+                      <div className="soldier-row__meta">
+                        {soldier.personalId && `מס"א: ${soldier.personalId} · `}
+                        {soldier.equipmentCount} פריטים
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="soldier-row__status">
+                      {soldier.verificationStatus === 'full' ? (
+                        <>
+                          <span className="status-badge status-badge--verified">
+                            ✅ אומת
+                          </span>
+                          {soldier.verificationTime && (
+                            <span className="verification-time">
+                              {formatTimestamp(soldier.verificationTime)}
+                            </span>
+                          )}
+                        </>
+                      ) : soldier.verificationStatus === 'partial' ? (
+                        <span
+                          className="status-badge status-badge--partial"
+                          title={`חסר: ${soldier.missingItems.join(', ')}`}
+                        >
+                          ⚠️ חלקי ({soldier.verifiedItemCount}/{soldier.equipmentCount})
+                        </span>
+                      ) : (
+                        <span className="status-badge status-badge--pending">
+                          ❌ ממתין
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </>
-        ) : null}
-      </main>
+            </div>
+          ))}
+        </>
+      ) : null}
     </>
   );
 }

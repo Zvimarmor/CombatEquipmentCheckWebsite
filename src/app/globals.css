@@ -932,3 +932,293 @@ body::before {
   background: var(--accent-green);
   color: white;
 }
+
+/* ---- Admin Tabs ---- */
+.admin-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+  overflow-x: auto;
+  padding-bottom: var(--space-sm);
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.admin-tab {
+  padding: var(--space-sm) var(--space-lg);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.admin-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+.admin-tab--active {
+  background: var(--bg-card);
+  color: var(--accent-green-light);
+  border-color: var(--border-primary);
+  font-weight: 600;
+}
+
+/* ---- Toasts ---- */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  z-index: 1000;
+  animation: fadeInUp 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
+}
+
+.toast--success {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success);
+}
+
+.toast--error {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+}
+
+/* ---- Modals ---- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-lg);
+  animation: scaleIn 0.2s ease-out;
+}
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal__icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-md);
+}
+
+.modal__title {
+  font-size: var(--font-size-xl);
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.modal__text {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xl);
+  line-height: 1.5;
+}
+
+.modal__actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.modal__actions .btn {
+  flex: 1;
+}
+
+/* ---- Partial Status ---- */
+.status-badge--partial {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  cursor: help;
+}
+
+.stat-card__value--warning {
+  color: var(--warning);
+}
+
+/* ---- Manage Soldiers ---- */
+.manage-toolbar {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.manage-search {
+  flex: 2;
+}
+
+.manage-filter {
+  flex: 1;
+  min-width: 150px;
+}
+
+.soldier-cards {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.soldier-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.soldier-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+.soldier-card__name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.soldier-card__meta {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.soldier-card__badge {
+  background: var(--bg-input);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+/* ---- Edit Soldier / Equipment Forms ---- */
+.equipment-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.equipment-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.equipment-row {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.equipment-row__fields {
+  display: flex;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.equipment-row__remove {
+  flex-shrink: 0;
+  width: 44px;
+  padding: 0;
+}
+
+.equipment-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.equipment-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: var(--bg-input);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  gap: var(--space-md);
+}
+
+.equipment-list-item__info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.equipment-list-item__type {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.equipment-list-item__serial {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+.equipment-list-item__fields {
+  display: flex;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.equipment-list-item__actions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.add-equipment-row {
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-primary);
+}
+
+.add-equipment-row__title {
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-md);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+  .manage-toolbar {
+    flex-direction: column;
+  }
+  
+  .equipment-row__fields,
+  .equipment-list-item__fields {
+    flex-direction: column;
+  }
+}
+

@@ -24,11 +24,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check that all items are verified
-    const allVerified = items.every((item: VerificationItem) => item.verified);
-    if (!allVerified) {
+    // At least one item must be verified
+    const anyVerified = items.some((item: VerificationItem) => item.verified);
+    if (!anyVerified) {
       return NextResponse.json(
-        { error: 'All equipment items must be verified before submitting' },
+        { error: 'יש לאמת לפחות פריט אחד לפני שליחה' },
         { status: 400 }
       );
     }
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const now = new Date();
     const dateStr = formatDate(now);
 
-    // Create verification record
+    // Create verification record with per-item state
     const verification = await prisma.verification.create({
       data: {
         soldierId,
@@ -59,6 +59,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const verifiedCount = items.filter((i: VerificationItem) => i.verified).length;
+    const totalCount = items.length;
+
     return NextResponse.json({
       success: true,
       verification: {
@@ -67,6 +70,9 @@ export async function POST(request: NextRequest) {
         date: verification.date,
         soldierName: soldier.name,
         teamName: soldier.team.name,
+        verifiedCount,
+        totalCount,
+        isPartial: verifiedCount < totalCount,
       },
     });
   } catch (error) {
