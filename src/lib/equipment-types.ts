@@ -37,6 +37,18 @@ export const EQUIPMENT_TYPES = [
   'אולר',
   'טיל לאו',
   'טיל מטאדור',
+  // Additional types found in existing data
+  'זאבון',
+  'טריג׳',
+  'לאופולד מארק 6',
+  'מארס',
+  'מטלון',
+  'מפרולייט',
+  'פליר',
+  'צובה',
+  'ציין',
+  'קנס״פ',
+  'קשר',
 ] as const;
 
 export type EquipmentTypeName = typeof EQUIPMENT_TYPES[number] | string;
