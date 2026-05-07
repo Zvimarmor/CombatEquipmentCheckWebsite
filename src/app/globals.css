@@ -103,7 +103,9 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   direction: rtl;
-  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -128,7 +130,6 @@ body::before {
 .app-container {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
