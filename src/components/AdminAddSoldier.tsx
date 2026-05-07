@@ -173,27 +173,24 @@ export default function AdminAddSoldier() {
               </button>
             </div>
 
-            {/* Equipment type datalist for autocomplete */}
-            <datalist id="equipment-types-list">
-              {allTypes.map((type) => (
-                <option key={type} value={type} />
-              ))}
-            </datalist>
-
             <div className="equipment-rows">
               {equipment.map((row, index) => (
                 <div key={index} className="equipment-row">
                   <div className="equipment-row__fields">
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="סוג ציוד"
+                    <select
+                      className="form-select"
                       value={row.type}
                       onChange={(e) =>
                         updateEquipmentRow(index, 'type', e.target.value)
                       }
-                      list="equipment-types-list"
-                    />
+                    >
+                      <option value="">— בחר פריט —</option>
+                      {allTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       type="text"
                       className="form-input"

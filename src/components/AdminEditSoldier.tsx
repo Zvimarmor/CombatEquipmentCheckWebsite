@@ -252,13 +252,6 @@ export default function AdminEditSoldier({
           ציוד ({soldier.equipment.length} פריטים)
         </h2>
 
-        <datalist id="edit-equipment-types-list">
-          {allTypes.map((type) => (
-            <option key={type} value={type} />
-          ))}
-        </datalist>
-
-        {/* Existing Equipment */}
         <div className="equipment-list">
           {soldier.equipment.map((item) => {
             const isEditing = editingEquipment[item.id];
@@ -267,9 +260,8 @@ export default function AdminEditSoldier({
                 {isEditing ? (
                   <>
                     <div className="equipment-list-item__fields">
-                      <input
-                        type="text"
-                        className="form-input"
+                      <select
+                        className="form-select"
                         value={isEditing.type}
                         onChange={(e) =>
                           setEditingEquipment((prev) => ({
@@ -277,8 +269,14 @@ export default function AdminEditSoldier({
                             [item.id]: { ...prev[item.id], type: e.target.value },
                           }))
                         }
-                        list="edit-equipment-types-list"
-                      />
+                      >
+                        <option value="">— בחר פריט —</option>
+                        {allTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
                       <input
                         type="text"
                         className="form-input"
@@ -340,14 +338,18 @@ export default function AdminEditSoldier({
         <div className="add-equipment-row">
           <h3 className="add-equipment-row__title">הוסף ציוד חדש</h3>
           <div className="equipment-row__fields">
-            <input
-              type="text"
-              className="form-input"
-              placeholder="סוג ציוד"
+            <select
+              className="form-select"
               value={newEquipment.type}
               onChange={(e) => setNewEquipment((prev) => ({ ...prev, type: e.target.value }))}
-              list="edit-equipment-types-list"
-            />
+            >
+              <option value="">— בחר פריט —</option>
+              {allTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
             <input
               type="text"
               className="form-input"
