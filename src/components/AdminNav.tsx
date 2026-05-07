@@ -7,6 +7,7 @@ interface AdminNavProps {
 
 const tabs = [
   { id: 'status', label: '📊 סטטוס', icon: '📊' },
+  { id: 'inventory', label: '📦 מלאי', icon: '📦' },
   { id: 'add', label: '➕ הוסף חייל', icon: '➕' },
   { id: 'manage', label: '⚙️ ניהול', icon: '⚙️' },
 ];

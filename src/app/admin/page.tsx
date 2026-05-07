@@ -4,6 +4,7 @@ import { useState } from 'react';
 import AdminLogin from '@/components/AdminLogin';
 import AdminNav from '@/components/AdminNav';
 import AdminDashboard from '@/components/AdminDashboard';
+import AdminInventory from '@/components/AdminInventory';
 import AdminAddSoldier from '@/components/AdminAddSoldier';
 import AdminManageSoldiers from '@/components/AdminManageSoldiers';
 
@@ -26,6 +27,7 @@ export default function AdminPage() {
         <AdminNav activeTab={activeTab} onTabChange={setActiveTab} />
 
         {activeTab === 'status' && <AdminDashboard />}
+        {activeTab === 'inventory' && <AdminInventory />}
         {activeTab === 'add' && <AdminAddSoldier />}
         {activeTab === 'manage' && <AdminManageSoldiers />}
       </main>

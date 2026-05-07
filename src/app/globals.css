@@ -1264,3 +1264,203 @@ body::before {
   font-weight: bold;
 }
 
+/* ---- Inventory Overview Grid ---- */
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: var(--space-md);
+}
+
+.inventory-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.inventory-card--clickable {
+  cursor: pointer;
+}
+
+.inventory-card--clickable:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.inventory-card--complete {
+  border-color: var(--success-border);
+}
+
+.inventory-card--complete::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: var(--success);
+}
+
+.inventory-card--partial {
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.inventory-card--partial::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: var(--warning);
+}
+
+.inventory-card--none {
+  border-color: var(--danger-border);
+}
+
+.inventory-card--none::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: var(--danger);
+}
+
+.inventory-card__name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.inventory-card__count {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inventory-card__numbers {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.inventory-card__bar {
+  width: 100%;
+  height: 5px;
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.inventory-card__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-green-light));
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.inventory-card--partial .inventory-card__bar-fill {
+  background: linear-gradient(90deg, var(--accent-amber-dark), var(--accent-amber));
+}
+
+.inventory-card--none .inventory-card__bar-fill {
+  background: var(--danger);
+}
+
+.inventory-card__empty {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+/* ---- Inventory Drilldown ---- */
+.inventory-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.inventory-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  gap: var(--space-md);
+  transition: all var(--transition-fast);
+}
+
+.inventory-item--verified {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.inventory-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.inventory-item__serial {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  direction: ltr;
+  text-align: right;
+}
+
+.inventory-item__soldier {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.inventory-item__team {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.inventory-item__action {
+  flex-shrink: 0;
+}
+
+.inventory-verify-btn {
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+@media (max-width: 480px) {
+  .inventory-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .inventory-card {
+    padding: var(--space-md);
+  }
+
+  .inventory-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .inventory-item__action {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

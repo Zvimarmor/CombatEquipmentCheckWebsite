@@ -71,8 +71,8 @@ export default function Home() {
       <header className="app-header" style={{ position: 'relative' }}>
         <h1 className="app-header__title">בדיקת צל״ם</h1>
         <p className="app-header__subtitle">אימות ציוד קרבי</p>
-        <Link 
-          href="/admin" 
+        <Link
+          href="/admin"
           className="btn btn--secondary btn--small"
           style={{ position: 'absolute', top: 'var(--space-md)', left: 'var(--space-md)' }}
         >
@@ -86,13 +86,12 @@ export default function Home() {
           {[1, 2, 3, 4].map((s, i) => (
             <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div
-                className={`stepper__step ${
-                  s === stepNumber
-                    ? 'stepper__step--active'
-                    : s < stepNumber
+                className={`stepper__step ${s === stepNumber
+                  ? 'stepper__step--active'
+                  : s < stepNumber
                     ? 'stepper__step--completed'
                     : ''
-                }`}
+                  }`}
               >
                 {s < stepNumber ? '✓' : s}
               </div>
